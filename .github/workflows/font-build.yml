@@ -1,0 +1,45 @@
+name: Build and Test Fonts (.glyphs)
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Install Build and QA Tools
+      run: |
+        python -m pip install --upgrade pip
+        pip install fontmake glyphsLib fontbakery[googlefonts] gftools
+
+    - name: Build Fonts from .glyphs
+      run: |
+        mkdir -p fonts/ttf fonts/otf
+        
+        # PENTING: Sesuaikan "GLF_Amara.glyphs" di bawah ini dengan nama file asli Anda jika berbeda
+        fontmake -g Sources/GLF_Amara.glyphs -o ttf --output-dir fonts/ttf/
+        fontmake -g Sources/GLF_Amara.glyphs -o otf --output-dir fonts/otf/
+
+    - name: Run FontBakery QA Tests
+      run: |
+        fontbakery check-googlefonts fonts/ttf/*.ttf --html fontbakery-report.html || true
+
+    - name: Upload Generated Fonts
+      uses: actions/upload-artifact@v4
+      with:
+        name: compiled-fonts-output
+        path: |
+          fonts/ttf/
+          fonts/otf/
+          fontbakery-report.html
