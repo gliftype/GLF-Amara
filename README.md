@@ -38,3 +38,5 @@ https://openfontlicense.org
 ## Contributors
 Sidiq Kamal Nurmawan <sidiq.nurmawan@gmail.com>
 Erwin Wirianata <wirianata.erwin@gmail.com>
+
+https://gliftype.com/
